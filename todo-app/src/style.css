@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ISKS 2026 "Built to Last" — the Task Queue panel is the focal point;
+   branding and background texture support it. */
+
+@layer base {
+  html {
+    font-size: 112.5%;
+  }
+
+  body {
+    @apply bg-isks-teal bg-dots bg-[length:18px_18px] font-body text-white antialiased;
+  }
+}
+
+@layer components {
+  .isks-eyebrow {
+    @apply font-display text-xs font-bold uppercase tracking-[0.34em] text-isks-mint;
+  }
+
+  /* Hoofdvlak: donker teal, orange kader, red-orange offset. Dit vlak mag als
+     enige element de volle accentbehandeling krijgen. */
+  .isks-panel {
+    @apply relative border-2 border-isks-orange bg-isks-teal-dark bg-dots-dark bg-[length:16px_16px] p-7 shadow-offset-lg sm:p-10;
+  }
+
+  .isks-panel-title {
+    @apply font-display text-4xl font-extrabold uppercase leading-none tracking-tight text-isks-orange sm:text-5xl;
+  }
+
+  .isks-input {
+    @apply min-w-0 flex-1 border-2 border-isks-mint/50 bg-isks-teal/10 px-4 py-3 font-body text-base text-white
+      transition-colors placeholder:text-isks-mint/60 focus:border-isks-orange focus:bg-isks-teal/20 focus:outline-none;
+  }
+
+  .isks-btn {
+    @apply border-2 border-isks-red-orange bg-isks-orange px-7 py-3 font-display text-base font-extrabold uppercase
+      tracking-wider text-isks-teal-dark shadow-offset-sm transition-transform
+      hover:-translate-x-[1px] hover:-translate-y-[1px] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none;
+  }
+
+  .isks-chip {
+    @apply border-2 border-isks-mint/40 px-4 py-1.5 font-display text-sm font-bold uppercase tracking-widest
+      text-isks-mint transition-colors hover:border-isks-mint hover:text-white;
+  }
+
+  .isks-chip-active {
+    @apply border-isks-orange bg-isks-orange text-isks-teal-dark hover:text-isks-teal-dark;
+  }
+
+  /* Regelindex: klein technisch label voor de taaknaam. */
+  .isks-index {
+    @apply w-7 shrink-0 font-display text-xs font-bold tabular-nums tracking-widest text-isks-mint/60;
+  }
+
+  /* Corner brackets — technical detail from the graphic language. */
+  .isks-bracket {
+    @apply pointer-events-none absolute h-12 w-12 border-isks-red-orange;
+  }
+}
