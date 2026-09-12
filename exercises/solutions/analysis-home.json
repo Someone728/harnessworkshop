@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-08-28T14:15:00Z",
+  "based_on": {
+    "harness_snapshot": "harness-snapshot.json",
+    "index": "index.json"
+  },
+  "findings": [
+    {
+      "id": 1,
+      "title": "No guides exist for ad-hoc work outside a git project",
+      "control_type": "guide",
+      "harness_component": "~/CLAUDE.md (does not exist), ~/AGENT.md (does not exist)",
+      "evidence_session_ids": [],
+      "why_it_matters": "harness-snapshot.json shows both instructions.CLAUDE.md and instructions.AGENT.md as null at the home directory level. Every session run directly in $HOME (not inside a specific project with its own CLAUDE.md) starts with zero standing instructions — no coding conventions, no default posture on autonomy, nothing. 7 of the 12 sessions analyzed were run this way. Compare this to the workshop project's own harness, which at least has (contradictory, but present) CLAUDE.md/AGENT.md guides.",
+      "recommendation": "Add a minimal ~/CLAUDE.md with whatever's true across all your ad-hoc work regardless of project (e.g. default shell/OS notes, a preference on autonomy/confirmation before destructive actions, pointers to where scratch work should live).",
+      "confidence": "high"
+    },
+    {
+      "id": 2,
+      "title": "Zero sensors registered at the home level",
+      "control_type": "sensor",
+      "harness_component": "~/.claude/settings.json hooks (key absent entirely)",
+      "evidence_session_ids": [],
+      "why_it_matters": "harness-snapshot.json's hooks array is empty and hooks_not_observable is empty in index.json — there is no PreToolUse, PostToolUse, Stop, or UserPromptSubmit hook of any kind. Nothing automatically catches a repeated failure, logs a decision, or gates a risky action before or after the agent acts. This matters concretely here: 3 sessions (3b902266, f51fa26f, a3c3d2d2, see finding #4) had the same tool fail more than once in a row, and nothing in the harness flagged that pattern — a human had to notice and intervene live each time.",
+      "recommendation": "Add at least one global sensor — even a simple Stop hook that flags when the same tool errored 2+ times in one turn sequence would have caught the exact pattern in finding #4 automatically instead of relying on live attention.",
+      "confidence": "high"
+    },
+    {
+      "id": 3,
+      "title": "The one guide that does exist (permissions) is degraded to the point of being meaningless",
+      "control_type": "guide",
+      "harness_component": "~/.claude/settings.json permissions.allow",
+      "evidence_session_ids": [],
+      "why_it_matters": "The allow-list has 105 entries. 16 of them are corrupted artifacts of the form 'Bash(__NEW_LINE_8a90271c2d057779__ grep:*)' — leftovers from some past multi-line command approval that got mis-parsed into garbage patterns that will never match a real command again. More importantly, the list ends with a bare 'Bash(*)', which grants blanket approval for any shell command whatsoever — this makes every other entry in the list redundant, since an unrestricted wildcard already permits everything a narrower pattern would. The permissions guide is not narrowing anything; it's decorative.",
+      "recommendation": "Remove the 16 corrupted __NEW_LINE_ entries. Replace the trailing Bash(*) with a real, bounded set of pre-approved patterns (the way the rest of the list was clearly originally intended to work) so the allowlist actually constrains what runs without confirmation.",
+      "confidence": "high"
+    },
+    {
+      "id": 4,
+      "title": "Three sessions show a confirmed denial followed by the same tool failing again",
+      "control_type": "guide+sensor",
+      "harness_component": "no guide steered the agent away from repeating the denied action, and no sensor caught the repeat",
+      "evidence_session_ids": [
+        "3b902266-17fc-4fa1-999f-91a53c6cfa24",
+        "f51fa26f-ffa1-4a29-a150-e311b0544fb4",
+        "a3c3d2d2-8461-4520-83ea-f9b66278d3c4"
+      ],
+      "why_it_matters": "All three permission_denials in the dataset carry confidence: \"confirmed\" (Claude Code's exact rejection boilerplate, not a keyword guess) — these are real moments the user had to stop the agent: a PowerShell command, an AskUserQuestion call, and a Playwright browser_navigate call. In every one of these three sessions, the same tool (PowerShell, Artifact, and Bash respectively) then shows up in repeated_failed_tools — the agent kept hitting friction with that tool after being corrected once. This is the concrete cost of findings #1 and #2 combined: no guide narrowed the agent's approach after correction, and no sensor caught the repeat automatically.",
+      "recommendation": "See recommendations for findings #1 and #2 — this is the evidence that those gaps have a real, repeated cost, not just a theoretical one.",
+      "confidence": "high"
+    },
+    {
+      "id": 5,
+      "title": "The same task was started twice in one day",
+      "control_type": "guide",
+      "harness_component": "no persisted state/handoff between related sessions",
+      "evidence_session_ids": [
+        "a3c3d2d2-8461-4520-83ea-f9b66278d3c4",
+        "ed714bf8-adb8-49d9-af8d-e7c539ee9dbd"
+      ],
+      "why_it_matters": "Both sessions are dated 2026-08-26 and are explicitly about the same task: 'Agent harness workshop template' and 'Agent harness workshop template repository,' the second one's first prompt being 'You will help me create a GitHub repository that serves as a template codebase for a workshop on improving an agent harness...'. Without a guide that persists what was already decided/built in the first attempt, the second session has to re-establish the same context and intent from scratch.",
+      "recommendation": "For multi-session efforts on the same deliverable, keep a short running note (even a plan file or a project-local CLAUDE.md once the repo exists) that the next session can pick up from, instead of re-describing the goal from zero.",
+      "confidence": "medium"
+    }
+  ]
+}

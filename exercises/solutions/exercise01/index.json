@@ -1,0 +1,319 @@
+{
+  "generated_at": "2026-09-09T08:31:57.222Z",
+  "logs_dir": "harness-logs",
+  "date_range": {
+    "from": "2026-08-24",
+    "to": "2026-09-02"
+  },
+  "session_count": 11,
+  "hooks_not_observable": [
+    "PreToolUse:.claude/hooks/pre-read-format-check.js",
+    "PostToolUse:.claude/hooks/post-edit-autocommit.js"
+  ],
+  "sessions": [
+    {
+      "session_id": "3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b",
+      "file": "sessions/2026-08-24/3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b.json",
+      "date": "2026-08-24",
+      "ai_title": "Blank todo label validation",
+      "first_prompt_preview": "Adding an empty todo just silently does nothing — no row, no message, nothing happens at all. There's a trim check in add-todo-form.ts and another one in todoStore.add, so the validation is duplicated",
+      "duration_ms": 930214,
+      "cost_usd": 0.5817,
+      "turn_count": 28,
+      "tool_error_count": 2,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "7c3e9b15-4a02-4d68-9e51-b83f1c60d7a9",
+      "file": "sessions/2026-08-25/7c3e9b15-4a02-4d68-9e51-b83f1c60d7a9.json",
+      "date": "2026-08-25",
+      "ai_title": "Disable clear-completed when nothing is completed",
+      "first_prompt_preview": "The 'Clear completed' button in the footer is always clickable even when nothing is completed — clicking it does nothing and looks broken. Disable it when there's nothing to clear.",
+      "duration_ms": 1046504,
+      "cost_usd": 0.6604,
+      "turn_count": 36,
+      "tool_error_count": 4,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Edit",
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Edit",
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "c7e04a19-25b6-4f83-9d1c-8ab3f6027e5d",
+      "file": "sessions/2026-08-25/c7e04a19-25b6-4f83-9d1c-8ab3f6027e5d.json",
+      "date": "2026-08-25",
+      "ai_title": "Inline editing of todo text",
+      "first_prompt_preview": "I want to double-click a todo to edit its text inline — Enter commits, Escape cancels, clicking away commits. Keep it consistent with how the rest of the components render.",
+      "duration_ms": 882551,
+      "cost_usd": 0.4126,
+      "turn_count": 28,
+      "tool_error_count": 2,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 1,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f",
+      "file": "sessions/2026-08-26/91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f.json",
+      "date": "2026-08-26",
+      "ai_title": "Text search combined with status filter",
+      "first_prompt_preview": "Add a search box above the list that filters todos by label text, and make it work together with the all/active/done filter rather than replacing it. Give me the approach before you write anything.",
+      "duration_ms": 1375447,
+      "cost_usd": 0.9412,
+      "turn_count": 46,
+      "tool_error_count": 2,
+      "hit_plan_mode": true,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [
+          "plan-and-ship"
+        ],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "b6205fd8-9c14-4a73-b8e0-71d3f4a95c62",
+      "file": "sessions/2026-08-27/b6205fd8-9c14-4a73-b8e0-71d3f4a95c62.json",
+      "date": "2026-08-27",
+      "ai_title": "Quote and spacing consistency in components",
+      "first_prompt_preview": "The quote style and spacing in src/components is all over the place. Tidy it up so the folder is internally consistent.",
+      "duration_ms": 607058,
+      "cost_usd": 0.5233,
+      "turn_count": 30,
+      "tool_error_count": 4,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [
+          "code-formatter"
+        ],
+        "permission_denial_count": 1,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "5a2c8d70-b41e-4936-8f2a-6e09b7d3c185",
+      "file": "sessions/2026-08-28/5a2c8d70-b41e-4936-8f2a-6e09b7d3c185.json",
+      "date": "2026-08-28",
+      "ai_title": "Optional due dates on todos",
+      "first_prompt_preview": "Add an optional due date per todo: show it on the row, and sort overdue items to the top of the list.",
+      "duration_ms": 650797,
+      "cost_usd": 0.6889,
+      "turn_count": 32,
+      "tool_error_count": 2,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": true
+      }
+    },
+    {
+      "session_id": "d41f6a90-83b2-4e07-a6c3-501d9e78b42f",
+      "file": "sessions/2026-08-29/d41f6a90-83b2-4e07-a6c3-501d9e78b42f.json",
+      "date": "2026-08-29",
+      "ai_title": "Consolidate the duplicate todo types",
+      "first_prompt_preview": "There are two different todo shapes in this codebase — something in Todo.ts and the Task interface in types.ts — and components convert between them. Work out which one is actually used and consolidat",
+      "duration_ms": 934277,
+      "cost_usd": 0.7541,
+      "turn_count": 30,
+      "tool_error_count": 3,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "e6041b83-7f2d-4c50-9a1b-3d85f207ae64",
+      "file": "sessions/2026-08-31/e6041b83-7f2d-4c50-9a1b-3d85f207ae64.json",
+      "date": "2026-08-31",
+      "ai_title": "Versioned storage schema and migration",
+      "first_prompt_preview": "storage.ts has a TODO about moving off localStorage. Skip the IndexedDB and remote-sync parts, but do add a schema version to what we persist plus a migration path, so changing the Task shape later do",
+      "duration_ms": 805831,
+      "cost_usd": 1.1927,
+      "turn_count": 36,
+      "tool_error_count": 3,
+      "hit_plan_mode": true,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash",
+          "Edit"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [
+          "code-formatter"
+        ],
+        "permission_denial_count": 1,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "48a7d3c1-6e59-4b02-8d17-f2905ac36e8b",
+      "file": "sessions/2026-09-01/48a7d3c1-6e59-4b02-8d17-f2905ac36e8b.json",
+      "date": "2026-09-01",
+      "ai_title": "Which state persists across reload",
+      "first_prompt_preview": "Someone reported that reloading the page keeps the status filter but not the search box. Is that intentional or a bug? Trace it and tell me what actually persists.",
+      "duration_ms": 432333,
+      "cost_usd": 0.5495,
+      "turn_count": 17,
+      "tool_error_count": 2,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [
+          "Bash"
+        ],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "f95c8207-3b6d-41ae-9c72-08d5e13ba64f",
+      "file": "sessions/2026-09-01/f95c8207-3b6d-41ae-9c72-08d5e13ba64f.json",
+      "date": "2026-09-01",
+      "ai_title": "Quote style reverted again in components",
+      "first_prompt_preview": "The quotes in add-todo-form.ts are back to double again. We tidied that folder last week. Why does this keep flipping?",
+      "duration_ms": 742788,
+      "cost_usd": 0.4708,
+      "turn_count": 19,
+      "tool_error_count": 1,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [],
+        "skills_invoked": [
+          "style-consistency"
+        ],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    },
+    {
+      "session_id": "2b95c47e-1a68-4d23-b7f0-9c46e8135a02",
+      "file": "sessions/2026-09-02/2b95c47e-1a68-4d23-b7f0-9c46e8135a02.json",
+      "date": "2026-09-02",
+      "ai_title": "Blank todo regression after cleanup pass",
+      "first_prompt_preview": "Typing spaces and hitting Add creates an empty row again. We fixed exactly this a week ago. That's the third thing we'd already fixed that has come back.",
+      "duration_ms": 888355,
+      "cost_usd": 1.0364,
+      "turn_count": 27,
+      "tool_error_count": 1,
+      "hit_plan_mode": false,
+      "subagent_count": 0,
+      "harness_signals": {
+        "tool_error_tools": [
+          "Bash"
+        ],
+        "repeated_failed_tools": [],
+        "skills_invoked": [],
+        "permission_denial_count": 0,
+        "hook_fire_counts": {
+          "UserPromptSubmit:.claude/hooks/prompt-plan-reminder.js": 0
+        },
+        "ended_in_error": false
+      }
+    }
+  ]
+}

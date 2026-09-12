@@ -1,0 +1,67 @@
+{
+  "generated_at": "2026-09-09T09:15:00Z",
+  "based_on": { "groups": "../exercise01/groups.json" },
+  "groups": [
+    {
+      "id": 1,
+      "title": "The only verification command named in the harness has been broken since a directory move",
+      "control_type": "guide",
+      "harness_component": "todo-app/tsconfig.json (`include: [\"todo-app/src\"]`, which resolves to `todo-app/todo-app/src` from inside the config's own directory), as run via the `npm run build` command CLAUDE.md's Commands section and AGENT.md's Testing section both name as the definition of done",
+      "evidence_session_ids": [
+        "3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b",
+        "7c3e9b15-4a02-4d68-9e51-b83f1c60d7a9",
+        "c7e04a19-25b6-4f83-9d1c-8ab3f6027e5d",
+        "91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f",
+        "b6205fd8-9c14-4a73-b8e0-71d3f4a95c62",
+        "5a2c8d70-b41e-4936-8f2a-6e09b7d3c185",
+        "d41f6a90-83b2-4e07-a6c3-501d9e78b42f",
+        "e6041b83-7f2d-4c50-9a1b-3d85f207ae64",
+        "2b95c47e-1a68-4d23-b7f0-9c46e8135a02"
+      ],
+      "why_it_matters": "Every one of these 9 sessions runs `npm run build` and hits the byte-identical TS18003 failure ('No inputs were found in config file... include paths were [\"workshop/src\"]') before tsc reads a single file, so the command AGENT.md's Testing section names as the definition of done has produced zero real type-checks across two weeks of work. The cost is concrete, not hypothetical: in session 5a2c8d70 the agent edited `todoFeature.ts` to call `store.add(text, dueAt)` against a method whose signature was still `add(label: string)` — a plain arity mismatch tsc would catch instantly — and only caught it because the human said 'Check your own diff before you call something done,' not because any harness mechanism flagged it. The agent's own words: 'The broken build isn't why this happened; it's why nothing caught it. I had the same information available the whole time and didn't look.'",
+      "recommendation": "In todo-app/tsconfig.json, change `\"include\": [\"todo-app/src\"]` to `\"include\": [\"src\"]` — tsconfig `include` paths resolve relative to the directory the tsconfig file itself lives in, so nesting the project directory name a second time inside `include` produces the non-existent double-nested path and the TS18003 failure. This is necessary before `npm run build` can mean anything, but note it is not sufficient by itself — see group 2's Stop-hook recommendation for catching behavioral regressions a type-check can't (e.g. a deleted `if` guard where the types are unchanged).",
+      "confidence": "high"
+    },
+    {
+      "id": 2,
+      "title": "Disabled hooks and no Stop hook let a fixed regression ship again with zero verification",
+      "control_type": "sensor",
+      "harness_component": "todo-app/.claude/hooks/pre-read-format-check.js, post-edit-autocommit.js, and prompt-plan-reminder.js — all three registered in .claude/settings.json but with 0 active lines (fully commented out); no Stop hook is registered at all",
+      "evidence_session_ids": [
+        "3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b",
+        "2b95c47e-1a68-4d23-b7f0-9c46e8135a02"
+      ],
+      "why_it_matters": "Session 2b95c47e traces the exact commit (`9c41f0a`, 'tidy naming and simplify add in todoStore') that deleted the `if (!trimmed) return;` guard which session 3f8b1c62 had added five days earlier to fix the identical blank-todo bug. The agent independently confirmed the disabled state itself by running `for f in .claude/hooks/*.js; do echo \"$f: $(grep -cvE '^\\s*(//|$)' $f) active lines\"; done` and getting '0 active lines' for all three files, and separately confirmed no `Stop` hook exists in `.claude/settings.json`. Its own conclusion: 'Nothing runs at the end of a turn... so there is no point where the final state is examined before I report' — and since 'the types are identical before and after,' even a working type-check (group 1) would not have caught this regression; only a behavioral check running at Stop would have.",
+      "recommendation": "In todo-app/.claude/settings.json, add a `Stop` hook entry that runs `npm run build` (once group 1's tsconfig fix lands) and surfaces failures before the agent's final response is sent. Also restore the commented-out logic in todo-app/.claude/hooks/pre-read-format-check.js (currently 0 of 17 active lines) and todo-app/.claude/hooks/prompt-plan-reminder.js (currently 0 of 12 active lines) so the behaviors `.claude/settings.json` implies are registered actually fire. Do not restore todo-app/.claude/hooks/post-edit-autocommit.js as part of this change without also resolving group 4 — see conflicts_with.",
+      "confidence": "medium",
+      "conflicts_with": [4]
+    },
+    {
+      "id": 3,
+      "title": "Three formatting instructions give contradictory answers, so quote style flips back and forth",
+      "control_type": "guide",
+      "harness_component": "CLAUDE.md's \"Code style\" section (\"match the surrounding file's conventions\") vs AGENT.md's \"Style\" section (\"follow the existing conventions used elsewhere in src/\") vs .claude/skills/style-consistency/SKILL.md (\"match whichever convention the majority of nearby files already use\") — three different rules, no formatter/linter/editorconfig to adjudicate between them",
+      "evidence_session_ids": [
+        "b6205fd8-9c14-4a73-b8e0-71d3f4a95c62",
+        "f95c8207-3b6d-41ae-9c72-08d5e13ba64f"
+      ],
+      "why_it_matters": "Session f95c8207 traces the flip with `git log`/`git show`: commit `3b90c2d` normalized `add-todo-form.ts` to single quotes, then commit `a1f4e07` four days later — while doing unrelated validation-styling work — put two of those strings back to double quotes. The agent's own diagnosis, after reading all three guidance sources: 'surrounding says double, nearby majority says single, elsewhere in src/ says single. So two agents following the repo faithfully will flip the file back and forth indefinitely, which is exactly what 3b90c2d and a1f4e07 are' — and it confirmed no prettier/eslint/editorconfig exists anywhere to adjudicate. Session b6205fd8, a week earlier, hit the identical absence of an arbiter while hand-counting quote usage with grep to normalize the same folder, concluding 'nothing will be able to check my work afterwards... the folder drifts apart again.'",
+      "recommendation": "Add a formatter config to todo-app/ (e.g. todo-app/.prettierrc with `singleQuote: true`) plus a `format`/`format:check` script in todo-app/package.json, then edit CLAUDE.md's \"Code style\" section and AGENT.md's \"Style\" section to delete the prose rules (\"match the surrounding file's conventions\" / \"follow the existing formatting conventions used elsewhere in src/\") and replace both with a single pointer to the formatter (e.g. \"Run `npm run format` — quote and spacing style is not a judgment call\"). This is the exact fix the agent proposed unprompted in f95c8207: 'the thing that would actually stop it is a formatter config plus a format script... otherwise CLAUDE.md's \"match the surrounding file\" will keep contradicting it.'",
+      "confidence": "high"
+    },
+    {
+      "id": 4,
+      "title": "CLAUDE.md and AGENT.md give opposite instructions on running ahead vs waiting for approval after a plan",
+      "control_type": "guide",
+      "harness_component": "CLAUDE.md's \"Working in this repo\" section (\"put a plan together and run with it rather than stopping to wait for a go-ahead\", plus \"commit once a piece of work is in a reasonable state\") vs AGENT.md's \"Autonomy\" section (\"write the plan and stop there — wait for them to say 'go'\", plus \"do not commit changes automatically\")",
+      "evidence_session_ids": [
+        "91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f",
+        "e6041b83-7f2d-4c50-9a1b-3d85f207ae64"
+      ],
+      "why_it_matters": "In session e6041b83 the user only said 'Plan it first' — not 'wait for my go-ahead' — yet right after presenting the plan and dropping out of plan mode, the agent wrote code immediately, stating explicitly: 'CLAUDE.md says to run with a plan rather than wait for sign-off on it, so I'll implement that directly' — a direct citation of CLAUDE.md overriding AGENT.md's 'write the plan and stop there... wait for them to say \"go\".' The same session later ran `git add -A && git commit -m \"add versioned storage schema + migration, tidy naming\"` unprompted, which the user rejected (a confirmed permission denial) — a live collision with AGENT.md's 'do not commit changes automatically.' Session 91d6f2a4 shows the opposite resolution of the identical fork: there the agent asked 'Want me to go with that?' and waited for the user's 'yes, go' before leaving plan mode. Which rule wins is unpredictable session to session, exactly as the group title states.",
+      "recommendation": "Make AGENT.md's \"Autonomy\" section canonical (both files already point to AGENT.md as the place for \"additional/operating rules\") and edit CLAUDE.md's \"Working in this repo\" section to delete \"put a plan together and run with it rather than stopping to wait for a go-ahead\" and \"commit once a piece of work is in a reasonable state,\" replacing both bullets with \"See AGENT.md's Autonomy section for plan and commit rules.\" Note: this conflicts with group 2's recommendation to restore todo-app/.claude/hooks/post-edit-autocommit.js, which would auto-commit after every Edit/Write and reintroduce exactly the automatic-commit behavior this recommendation removes from CLAUDE.md — see conflicts_with.",
+      "confidence": "high",
+      "conflicts_with": [2]
+    }
+  ]
+}

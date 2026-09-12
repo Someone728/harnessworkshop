@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-09-07T18:10:00Z",
+  "based_on": {
+    "harness_snapshot": "../exercise01/harness-snapshot.json",
+    "index": "../exercise01/index.json",
+    "analysis": "../exercise02/analysis.json"
+  },
+  "actions": [
+    {
+      "id": 1,
+      "finding_id": 1,
+      "title": "Fix tsconfig.json's include path so the build gate actually runs",
+      "fix_type": "mechanical",
+      "action": "implemented",
+      "harness_component": "todo-app/tsconfig.json",
+      "diff": "--- a/todo-app/tsconfig.json\n+++ b/todo-app/tsconfig.json\n@@ -14,5 +14,5 @@\n     \"noFallthroughCasesInSwitch\": true\n   },\n-  \"include\": [\"todo-app/src\"]\n+  \"include\": [\"src\"]\n }",
+      "pr": {
+        "branch": "harness-fix/tsconfig-include-path",
+        "title": "Fix tsconfig.json include path (finding #1)",
+        "body_summary": "Implements analysis.json finding #1. include was [\"todo-app/src\"] inside a config that already lives in todo-app/, resolving to todo-app/todo-app/src and matching nothing - tsc exited TS18003 in 10 of 11 sessions in harness-logs/. Changed to [\"src\"]. Verified by re-running npm run build."
+      },
+      "rationale": "Direct, checkable fix against the exact file the finding cites - no judgment call about which of two legitimate options to pick.",
+      "confidence": "high"
+    },
+    {
+      "id": 2,
+      "finding_id": 2,
+      "title": "Pick one formatting enforcement mechanism",
+      "fix_type": "policy_decision",
+      "action": "flagged_for_human_decision",
+      "harness_component": "todo-app/CLAUDE.md, todo-app/AGENT.md, todo-app/.claude/skills/style-consistency/SKILL.md",
+      "options": [
+        {
+          "label": "A: Adopt a formatter",
+          "change": "Approve adding prettier as a dev dependency (the exact thing rejected mid-session in b6205fd8), add a `format` script, and rewrite the style guidance in CLAUDE.md/AGENT.md/style-consistency to point at it instead of 'match the surrounding file'.",
+          "tradeoffs": "Removes the judgment call entirely. Costs a new dependency and a small amount of build-tooling churn - why this needs a human sign-off, not a silent implementation."
+        },
+        {
+          "label": "B: Codify one explicit rule, no new dependency",
+          "change": "Replace 'match the surrounding file's conventions' in both CLAUDE.md and AGENT.md with one explicit, stated rule (e.g. 'always single quotes'), and update style-consistency's SKILL.md to reference the same rule.",
+          "tradeoffs": "Zero new dependencies. Depends on every future session actually reading and following the text rule - f95c8207/b6205fd8 already show this codebase's style drifting twice under text-only guidance."
+        }
+      ],
+      "rationale": "Adding a dependency vs. relying on text-only guidance is a call this data doesn't settle. Implementing either silently would be guessing on the team's behalf.",
+      "confidence": "high"
+    },
+    {
+      "id": 3,
+      "finding_id": 3,
+      "title": "Resolve the commit and plan-approval contradiction between CLAUDE.md and AGENT.md",
+      "fix_type": "policy_decision",
+      "action": "flagged_for_human_decision",
+      "harness_component": "todo-app/CLAUDE.md vs todo-app/AGENT.md",
+      "options": [
+        {
+          "label": "A: AGENT.md wins on autonomy",
+          "change": "Delete CLAUDE.md's 'commit once a piece of work is in a reasonable state' and 'run with it rather than stopping to wait for a go-ahead' lines. Agent never auto-commits, always stops after a plan for explicit approval.",
+          "tradeoffs": "Matches what actually happened in e6041b83 - a human had to reject an autonomous commit the agent made following CLAUDE.md's wording. Slower iteration."
+        },
+        {
+          "label": "B: CLAUDE.md wins on autonomy",
+          "change": "Delete AGENT.md's 'do not commit changes automatically' and 'wait for them to say go' lines. Agent commits as work reaches a reasonable state and runs with plans without waiting.",
+          "tradeoffs": "Faster iteration. But the only real evidence in this dataset (e6041b83) is a human actively blocking exactly this behavior."
+        }
+      ],
+      "rationale": "Both files are internally consistent on their own; the conflict is between them, and nothing in the input files states which one the team wants. A values call, not a bug an agent can implement its way out of.",
+      "confidence": "high"
+    },
+    {
+      "id": 4,
+      "finding_id": 3,
+      "title": "Fix the broken SKILLS.md reference",
+      "fix_type": "mechanical",
+      "action": "implemented",
+      "harness_component": "todo-app/CLAUDE.md, todo-app/SKILLS.md (missing)",
+      "diff": "--- /dev/null\n+++ b/todo-app/SKILLS.md\n@@ -0,0 +1,9 @@\n+# Skills\n+\n+- **code-formatter** — Use for formatting and style nits in this repo — spacing, quote style, import order, small naming tweaks. Scope is src/.\n+- **plan-and-ship** — Use when someone asks for a plan, approach, or design for a change in this repo.\n+- **refactor-cleanup** — For when a piece of code has grown messy and needs a proper cleanup pass — extra abstraction, duplicated logic, confusing structure. Most relevant in src/state, src/features, and src/components.\n+- **style-consistency** — The codebase mixes naming conventions and folder depth across files (camelCase, kebab-case, PascalCase, inconsistent nesting). Use this to bring a file or folder in line with the convention used elsewhere.",
+      "pr": {
+        "branch": "harness-fix/skills-index",
+        "title": "Add missing SKILLS.md (finding #3, mechanical part)",
+        "body_summary": "CLAUDE.md references SKILLS.md twice but it doesn't exist. Every name/summary here already exists in harness-snapshot.json's skills array, so this is assembly, not judgment - implemented directly. The policy half of finding #3 (autonomy contradiction) is a separate, flagged action; this PR doesn't touch that."
+      },
+      "rationale": "Nothing here requires inventing content or making a judgment call, only assembling what harness-snapshot.json already has.",
+      "confidence": "high"
+    },
+    {
+      "id": 5,
+      "finding_id": 4,
+      "title": "Remove the two dead hooks unrelated to the commit-policy question",
+      "fix_type": "mechanical",
+      "action": "implemented",
+      "harness_component": "todo-app/.claude/hooks/pre-read-format-check.js (PreToolUse), todo-app/.claude/hooks/prompt-plan-reminder.js (UserPromptSubmit)",
+      "diff": "--- a/todo-app/.claude/settings.json\n+++ b/todo-app/.claude/settings.json\n@@ -1,12 +1,5 @@\n {\n   \"hooks\": {\n-    \"PreToolUse\": [\n-      {\n-        \"matcher\": \"Read\",\n-        \"hooks\": [\n-          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-read-format-check.js\\\"\" }\n-        ]\n-      }\n-    ],\n     \"PostToolUse\": [ ... unchanged, see action 6 ... ],\n-    \"UserPromptSubmit\": [\n-      {\n-        \"hooks\": [\n-          { \"type\": \"command\", \"command\": \"node \\\"$CLAUDE_PROJECT_DIR/.claude/hooks/prompt-plan-reminder.js\\\"\" }\n-        ]\n-      }\n-    ]\n+    \"PostToolUse\": [ ... unchanged, see action 6 ... ]\n   }\n }",
+      "pr": {
+        "branch": "harness-fix/remove-dead-hooks",
+        "title": "Remove two dead hook registrations (finding #4)",
+        "body_summary": "pre-read-format-check.js and prompt-plan-reminder.js are both loc_active: 0 while registered live in settings.json. Removed the dead registrations. post-edit-autocommit.js is intentionally not touched here - see action 6, blocked on the still-open policy decision in action 3."
+      },
+      "rationale": "Both hooks are loc_active: 0 while registered live - a verifiable fact. Removing the dead registration (rather than guessing at restoring hook bodies neither analysis.json nor the transcripts specify) is the safer of two equally-mechanical options.",
+      "confidence": "high"
+    },
+    {
+      "id": 6,
+      "finding_id": 4,
+      "title": "post-edit-autocommit.js: do not implement yet",
+      "fix_type": "policy_decision",
+      "action": "flagged_for_human_decision",
+      "harness_component": "todo-app/.claude/hooks/post-edit-autocommit.js (PostToolUse)",
+      "blocked_by": [3],
+      "rationale": "This hook's entire purpose - maintaining a running auto-commit trail - is the exact behavior AGENT.md forbids and CLAUDE.md invites, i.e. action #3. Reviving it presumes option B there; deleting its registration presumes option A. Implementing either now would silently decide action #3 on the team's behalf. Wait for #3 to resolve, then this becomes mechanical.",
+      "confidence": "high"
+    },
+    {
+      "id": 7,
+      "finding_id": 5,
+      "title": "Determine the team's actual target shell/OS before writing anything into the guides",
+      "fix_type": "needs_investigation",
+      "action": "reported_next_step",
+      "harness_component": "todo-app/CLAUDE.md and todo-app/AGENT.md (neither states an OS/shell)",
+      "next_step": "Ask the team, or check for an authoritative source outside these files (CI config, a devcontainer/.tool-versions file, package.json engines/os fields) - don't infer an answer from these transcripts. The transcripts themselves are inconsistent: 7c3e9b15/b6205fd8/48a7d3c1 show a Unix `head` call failing with a PowerShell-style error, and in 48a7d3c1 the very next attempt (`Get-Content`, real PowerShell syntax) fails too, this time with a bash-style error - contradictory evidence about which shell is actually in play. Writing a guessed answer into CLAUDE.md would just replace one wrong assumption (the agent's) with another (this skill's).",
+      "confidence": "medium"
+    }
+  ]
+}

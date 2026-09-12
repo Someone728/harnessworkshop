@@ -1,0 +1,80 @@
+{
+  "captured_at": "2026-09-09T08:19:55.314Z",
+  "project_dir": "todo-app",
+  "instructions": {
+    "CLAUDE.md": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working in this repository.\n\n## Project overview\n\nA small TODO application built with Node.js, TypeScript, Vite, and TailwindCSS. Entry point\nis `src/main.ts`; state lives in `src/state/todoStore.ts`.\n\n## Commands\n\n- `npm install` — install dependencies\n- `npm run dev` — start the dev server\n- `npm run build` — type-check and build for production\n\n## Working in this repo\n\n- This is a small, fast-moving side project with no formal review process — use your judgment\n  rather than checking in on every decision.\n- If something is clearly wrong or inconsistent in a file you're already touching, it's fine\n  to fix it as part of the change instead of filing it separately for later.\n- Small commits as you go are easier to follow than one large commit at the end — commit once\n  a piece of work is in a reasonable state.\n- A plan is only really useful once it's been tried, so when someone asks for a plan, put one\n  together and run with it rather than stopping to wait for a go-ahead.\n\n## Code style\n\n- Match the surrounding file's conventions rather than a single repo-wide standard — this\n  codebase has evolved organically and different areas have different habits.\n- See SKILLS.md for the skills available for formatting, cleanup, and refactoring work.\n\n## See also\n\n- `AGENT.md` for additional operating rules.\n- `SKILLS.md` for the skill index.",
+    "AGENT.md": "# AGENT.md\n\nOperating rules for any agent (Claude Code or otherwise) working in this repository. This is\na small TODO app built with Node.js, TypeScript, Vite, and TailwindCSS — see `README.md` for\nthe full project description.\n\n## Autonomy\n\n- Do not commit changes automatically. Always leave commits to the user unless they've\n  explicitly asked you to commit in the current conversation.\n- Stay scoped to what was asked. If you spot an unrelated improvement, mention it instead of\n  making the change — don't refactor code you weren't asked to touch.\n- When the user asks for a plan, write the plan and stop there. Wait for them to say \"go\"\n  before making any changes.\n\n## Style\n\n- Follow the existing formatting conventions used elsewhere in `src/`.\n- Keep changes minimal and easy to review.\n\n## Testing\n\n- There is no test suite configured yet. Run `npm run build` to type-check before considering\n  a change done.",
+    "SKILLS.md": null,
+    "control_type": "guide",
+    "_note": "Contradictions found: (1) CLAUDE.md says plans should be run with immediately ('run with it rather than stopping to wait for a go-ahead'), while AGENT.md says to write the plan and stop, waiting for the user to say 'go'. (2) CLAUDE.md encourages committing as you go ('commit once a piece of work is in a reasonable state'), while AGENT.md says not to commit automatically unless explicitly asked. Broken reference: CLAUDE.md points to SKILLS.md for the skill index, but no SKILLS.md file exists in the project dir (see instructions.SKILLS.md: null above)."
+  },
+  "hooks": [
+    {
+      "file": ".claude/hooks/pre-read-format-check.js",
+      "event": "PreToolUse",
+      "matcher": "Read",
+      "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-read-format-check.js\"",
+      "enabled": false,
+      "loc_active": 0,
+      "loc_total": 17,
+      "observable_in_transcript": false,
+      "observability_note": "PreToolUse hook stdout/stderr is not persisted in session JSONL; enabled/disabled status can only be determined by reading this file, not by scanning transcripts.",
+      "control_type": "sensor"
+    },
+    {
+      "file": ".claude/hooks/post-edit-autocommit.js",
+      "event": "PostToolUse",
+      "matcher": "Edit|Write",
+      "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-autocommit.js\"",
+      "enabled": false,
+      "loc_active": 0,
+      "loc_total": 24,
+      "observable_in_transcript": false,
+      "observability_note": "PostToolUse hook stdout/stderr and side effects are not observable from the transcript alone; correlate this hook's tool_call timestamps against external state (e.g. git log) if you need to confirm it fired.",
+      "control_type": "sensor"
+    },
+    {
+      "file": ".claude/hooks/prompt-plan-reminder.js",
+      "event": "UserPromptSubmit",
+      "matcher": null,
+      "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/prompt-plan-reminder.js\"",
+      "enabled": false,
+      "loc_active": 0,
+      "loc_total": 12,
+      "observable_in_transcript": true,
+      "observability_note": "If enabled, this hook's hookSpecificOutput.additionalContext is injected inline ahead of the next user turn and IS visible in the transcript (as a hook_injection event).",
+      "control_type": "sensor"
+    }
+  ],
+  "skills": [
+    {
+      "name": "code-formatter",
+      "path": ".claude/skills/code-formatter/SKILL.md",
+      "summary": "Use for formatting and style nits in this repo — spacing, quote style, import order, small naming tweaks. Scope is src/.",
+      "control_type": "guide"
+    },
+    {
+      "name": "plan-and-ship",
+      "path": ".claude/skills/plan-and-ship/SKILL.md",
+      "summary": "Use when someone asks for a plan, approach, or design for a change in this repo.",
+      "control_type": "guide"
+    },
+    {
+      "name": "refactor-cleanup",
+      "path": ".claude/skills/refactor-cleanup/SKILL.md",
+      "summary": "For when a piece of code has grown messy and needs a proper cleanup pass — extra abstraction, duplicated logic, confusing structure. Most relevant in src/state, src/features, and src/components.",
+      "control_type": "guide"
+    },
+    {
+      "name": "style-consistency",
+      "path": ".claude/skills/style-consistency/SKILL.md",
+      "summary": "The codebase mixes naming conventions and folder depth across files (camelCase, kebab-case, PascalCase, inconsistent nesting). Use this to bring a file or folder in line with the convention used elsewhere.",
+      "control_type": "guide"
+    }
+  ],
+  "permissions": {
+    "raw": {},
+    "control_type": "guide",
+    "_note": "No .claude/settings.local.json found; permissions come only from .claude/settings.json."
+  }
+}

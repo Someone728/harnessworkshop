@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-09-09T08:35:17Z",
+  "based_on": { "harness_snapshot": "harness-snapshot.json", "index": "index.json" },
+  "groups": [
+    {
+      "id": 1,
+      "title": "The only verification command named in the harness has been broken since a directory move",
+      "control_type": "guide",
+      "harness_component": "todo-app/tsconfig.json (`include: [\"todo-app/src\"]`, which resolves to `todo-app/todo-app/src` from inside the config's own directory), as run via the `npm run build` command CLAUDE.md's Commands section and AGENT.md's Testing section both name as the definition of done",
+      "evidence_session_ids": [
+        "3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b",
+        "7c3e9b15-4a02-4d68-9e51-b83f1c60d7a9",
+        "c7e04a19-25b6-4f83-9d1c-8ab3f6027e5d",
+        "91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f",
+        "b6205fd8-9c14-4a73-b8e0-71d3f4a95c62",
+        "5a2c8d70-b41e-4936-8f2a-6e09b7d3c185",
+        "d41f6a90-83b2-4e07-a6c3-501d9e78b42f",
+        "e6041b83-7f2d-4c50-9a1b-3d85f207ae64",
+        "2b95c47e-1a68-4d23-b7f0-9c46e8135a02"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Disabled hooks and no Stop hook let a fixed regression ship again with zero verification",
+      "control_type": "sensor",
+      "harness_component": "todo-app/.claude/hooks/pre-read-format-check.js, post-edit-autocommit.js, and prompt-plan-reminder.js — all three registered in .claude/settings.json but with 0 active lines (fully commented out); no Stop hook is registered at all",
+      "evidence_session_ids": [
+        "3f8b1c62-9d47-4a15-b0e3-7c1a52d9f04b",
+        "2b95c47e-1a68-4d23-b7f0-9c46e8135a02"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Three formatting instructions give contradictory answers, so quote style flips back and forth",
+      "control_type": "guide",
+      "harness_component": "CLAUDE.md's \"Code style\" section (\"match the surrounding file's conventions\") vs AGENT.md's \"Style\" section (\"follow the existing conventions used elsewhere in src/\") vs .claude/skills/style-consistency/SKILL.md (\"match whichever convention the majority of nearby files already use\") — three different rules, no formatter/linter/editorconfig to adjudicate between them",
+      "evidence_session_ids": [
+        "b6205fd8-9c14-4a73-b8e0-71d3f4a95c62",
+        "f95c8207-3b6d-41ae-9c72-08d5e13ba64f"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "CLAUDE.md and AGENT.md give opposite instructions on running ahead vs waiting for approval after a plan",
+      "control_type": "guide",
+      "harness_component": "CLAUDE.md's \"Working in this repo\" section (\"put a plan together and run with it rather than stopping to wait for a go-ahead\", plus \"commit once a piece of work is in a reasonable state\") vs AGENT.md's \"Autonomy\" section (\"write the plan and stop there — wait for them to say 'go'\", plus \"do not commit changes automatically\")",
+      "evidence_session_ids": [
+        "91d6f2a4-0c38-4e71-a5b9-2d47c8e1360f",
+        "e6041b83-7f2d-4c50-9a1b-3d85f207ae64"
+      ]
+    }
+  ]
+}
